@@ -1,26 +1,86 @@
 <!DOCTYPE html>
-<html lang="he">
+<html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>דף הבית</title>
+    <title>הבלוג של הכותבים</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>ברוכים הבאים לאתר שלי</h1>
-    </header>
-    <main>
-        <h2>אודותיי</h2>
-        <p>זהו דף הבית של האתר שנוצר כדי לראות אם זה עובד, דוגמה.</p>
-        
-        <!היי חברים, זהו האתר עליו אני עובד כעת>
-        <section>
-            <h2>הפרויקט שלי</h2>
-            <p>זהו פרויקט חדש שאני עובד עליו. הוא כולל פיתוח של מערכת לניהול תוכן.</p>
+    <!-- תפריט ניווט -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">הבלוג שלי</a>
+            <div class="nav-links">
+                <a href="posts.html">כל הפוסטים</a>
+                <a href="post-editor.html" class="admin-link">כתיבת פוסט חדש</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- תוכן ראשי -->
+    <main class="main-content">
+        <!-- כותרת ראשית -->
+        <header class="site-header">
+            <h1>ברוכים הבאים לבלוג של הכותבים. ובשיאו- דון קישוט של המיליםי</h1>
+            <p class="site-description">מקום לשתף מחשבות ורעיונות</p>
+        </header>
+
+        <!-- פוסטים אחרונים -->
+        <section class="featured-posts">
+            <h2>פוסטים אחרונים</h2>
+            <div id="recent-posts" class="posts-grid"></div>
         </section>
-        
-        <section>
+    </main>
+
+    <!-- סקריפט לטעינת פוסטים אחרונים -->
+    <script>
+        function loadRecentPosts() {
+            const postsContainer = document.getElementById('recent-posts');
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            
+            // מיון לפי תאריך ולקיחת 3 הפוסטים האחרונים
+            const recentPosts = posts
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 3);
+
+            if (recentPosts.length === 0) {
+                postsContainer.innerHTML = `
+                    <div class="no-posts">
+                        <p>עדיין אין פוסטים.</p>
+                        <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
+                    </div>
+                `;
+                return;
+            }
+
+            postsContainer.innerHTML = recentPosts.map(post => `
+                <article class="post-card">
+                    <h3>${post.title}</h3>
+                    <div class="post-meta">
+                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
+                        <span class="post-author">מאת ${post.author}</span>
+                    </div>
+                    <p class="post-summary">${post.summary}</p>
+                    <div class="post-tags">
+                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // טעינת הפוסטים בעת טעינת הדף
+        window.addEventListener('load', loadRecentPosts);
+    </script>
+
+    <!-- פוטר -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>© ${new Date().getFullYear()} כל הזכויות שמורות ל-huxhkuh</p>
+        </div>
+    </footer>
+</body>
+</html>
             <h2>צור קשר</h2>
             <p>אתם מוזמנים ליצור קשר דרך כתובת הדוא"ל שלי: L0548461204@GMAIL.COM</p>
         </section>
