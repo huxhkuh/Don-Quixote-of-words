@@ -1,7 +1,8 @@
 class BlogSystem {
     constructor() {
-        this.GITHUB_REPO = 'Don-Quixote-of-words/docs';
-        this.POSTS_URL = `https://raw.githubusercontent.com/${this.GITHUB_REPO}/main/posts.json`;
+        this.GITHUB_USER = 'huxhkuh';
+        this.GITHUB_REPO = 'Don-Quixote-of-words';
+        this.POSTS_URL = `https://raw.githubusercontent.com/${this.GITHUB_USER}/${this.GITHUB_REPO}/main/docs/posts.json`;
     }
 
     async loadPosts() {
@@ -45,7 +46,7 @@ class BlogSystem {
 כדי להוסיף את הפוסט החדש:
 
 1. פתח את הקישור הבא:
-   https://github.com/${this.GITHUB_REPO}/edit/main/posts.json
+   https://github.com/${this.GITHUB_USER}/${this.GITHUB_REPO}/edit/main/docs/posts.json
 
 2. הוסף את הפוסט החדש למערך "posts" (בתחילת המערך):
 
