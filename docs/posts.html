@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הבלוג שלי</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="blog-container">
+        <h1>הפוסטים שלי</h1>
+        <div id="posts-list" class="posts-grid"></div>
+    </div>
+
+    <script>
+        // טעינת הפוסטים
+        function loadPosts() {
+            const postsContainer = document.getElementById('posts-list');
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            postsContainer.innerHTML = posts.map(post => `
+                <article class="post-card">
+                    <h2>${post.title}</h2>
+                    <div class="post-meta">
+                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
+                        <span class="post-author">מאת ${post.author}</span>
+                    </div>
+                    <p class="post-summary">${post.summary}</p>
+                    <div class="post-tags">
+                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // טעינת הפוסטים בעת טעינת הדף
+        window.addEventListener('load', loadPosts);
+    </script>
+</body>
+</html>
