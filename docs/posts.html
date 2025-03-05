@@ -22,52 +22,80 @@
     </nav>
 
     <main class="main-content">
-        <section class="posts-section">
-            <h2>כל הפוסטים</h2>
-            <div id="posts-grid" class="posts-grid">
-                <!-- הפוסטים יוכנסו כאן דינמית -->
-            </div>
-        </section>
+        <div id="loading" class="loading">טוען פוסטים...</div>
+        <div id="posts-container" class="posts-grid"></div>
     </main>
 
-    <footer class="site-footer">
-        <p>&copy; 2025 הכותבים - ודון קישוט של המילים</p>
-    </footer>
-
+    <script src="load-posts.js"></script>
     <script>
-        function loadAllPosts() {
-            const postsGrid = document.getElementById('posts-grid');
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+        const blogSystem = new BlogSystem();
+
+        async function displayPosts() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('posts-container');
             
-            if (posts.length === 0) {
-                postsGrid.innerHTML = `
-                    <div class="no-posts">
-                        <p>עדיין אין פוסטים.</p>
-                        <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
-                    </div>`;
-                return;
+            try {
+                loading.style.display = 'block';
+                const posts = await blogSystem.loadPosts();
+                
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-posts">
+                            <p>עדיין אין פוסטים.</p>
+                            <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = posts.map(post => `
+                        <article class="post-card">
+                            <h2>${post.title}</h2>
+                            <div class="post-meta">
+                                <time datetime="${post.date}">
+                                    ${new Date(post.date).toLocaleDateString('he-IL')}
+                                </time>
+                                <span class="author">מאת ${post.author}</span>
+                            </div>
+                            <p class="summary">${post.summary}</p>
+                            <div class="tags">
+                                ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                            <a href="post-view.html?id=${post.id}" class="button">קרא עוד</a>
+                        </article>
+                    `).join('');
+                }
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="error">
+                        <p>אירעה שגיאה בטעינת הפוסטים.</p>
+                        <p>אנא נסה שוב מאוחר יותר.</p>
+                    </div>
+                `;
+                console.error('Error:', error);
+            } finally {
+                loading.style.display = 'none';
             }
-
-            // מיון הפוסטים לפי תאריך (החדש ביותר קודם)
-            const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            postsGrid.innerHTML = sortedPosts.map(post => `
-                <article class="post-card">
-                    <h3>${post.title}</h3>
-                    <div class="post-meta">
-                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
-                        <span class="post-author">מאת ${post.author}</span>
-                    </div>
-                    <div class="post-summary">${post.summary}</div>
-                    <div class="post-tags">
-                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                    <a href="post-view.html?id=${post.date}" class="button">קרא עוד</a>
-                </article>
-            `).join('');
         }
 
-        window.addEventListener('load', loadAllPosts);
+        window.addEventListener('load', displayPosts);
     </script>
+
+    <style>
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2em;
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: var(--primary);
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
 </body>
 </html>
