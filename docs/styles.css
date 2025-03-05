@@ -1,25 +1,175 @@
+:root {
+    /* פלטת צבעים שמחה ומודרנית */
+    --primary: #FF6B6B;      /* ורוד-אדום חי */
+    --secondary: #4ECDC4;    /* טורקיז בהיר */
+    --accent: #FFE66D;       /* צהוב שמש */
+    --purple-pop: #7C73E6;   /* סגול עדין */
+    --background: #FFFFFF;   /* רקע לבן נקי */
+    --text: #2D3436;        /* אפור כהה לטקסט */
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background-color: var(--background);
     margin: 0;
-    padding: 0;
-    background-color: #f0f0f0; /* צבע רקע של הגוף */
+    padding: 20px;
 }
 
-header {
-    background-color: #FFA500; /* צבע רקע כתום של הכותרת */
-    color: white; /* צבע טקסט של הכותרת */
-    padding: 1em;
-    text-align: center;
+/* כותרות עם צבעים שמחים */
+h1 {
+    color: var(--primary);
+    font-size: 2.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1em;
 }
 
-main {
-    margin: 2em;
+h2 {
+    color: var(--secondary);
+    font-size: 2em;
+    font-weight: 600;
+    margin-top: 1.5em;
 }
 
-footer {
-    background-color: #FFA500; /* צבע רקע כתום של התחתית */
-    color: white; /* צבע טקסט של התחתית */
-    text-align: center;
+h3 {
+    color: var(--purple-pop);
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+/* טקסט רגיל */
+p {
+    font-size: 1.1em;
+    line-height: 1.8;
+    margin-bottom: 1.2em;
+}
+
+/* קישורים מעוצבים */
+a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+a:hover {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+/* כפתורים */
+.button {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* קופסאות תוכן */
+.content-box {
+    background: linear-gradient(135deg, #fff, #f8f9fa);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--accent);
+}
+
+/* רשימות */
+ul, ol {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+ul li::before {
+    content: "•";
+    color: var(--primary);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+/* הדגשות */
+.highlight {
+    background: linear-gradient(120deg, var(--accent) 0%, var(--accent) 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 0.25em;
+    background-position: 0 88%;
+    transition: background-size 0.25s ease-in;
+}
+
+.highlight:hover {
+    background-size: 100% 88%;
+}
+
+/* אנימציות בגלילה */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* תגיות */
+.tag {
+    background-color: var(--accent);
+    color: var(--text);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: inline-block;
+    margin: 5px;
+}
+
+/* מדיה קוורי לתצוגה מותאמת למובייל */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.6em;
+    }
+
+    h3 {
+        font-size: 1.3em;
+    }
+
+    .content-box {
+        padding: 15px;
+    }
+}
     padding: 1em;
     position: fixed;
     width: 100%;
