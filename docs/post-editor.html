@@ -111,136 +111,118 @@
         }
     </style>
 
-    <script>
-        function formatText(style) {
-            const textarea = document.getElementById('content');
-            const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-            let formatted = '';
+   <script>
+document.getElementById('postForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const postData = {
+        id: Date.now().toString(),
+        title: document.getElementById('title').value,
+        summary: document.getElementById('summary').value,
+        content: document.getElementById('content').value,
+        tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()),
+        date: "2025-03-05T23:03:41Z",
+        author: "huxhkuh"
+    };
 
-            switch(style) {
-                case 'bold':
-                    formatted = `<strong>${selection}</strong>`;
-                    break;
-                case 'italic':
-                    formatted = `<em>${selection}</em>`;
-                    break;
-                case 'h2':
-                    formatted = `\n<h2>${selection}</h2>\n`;
-                    break;
-                case 'ul':
-                    formatted = `\n<ul>\n  <li>${selection}</li>\n</ul>\n`;
-                    break;
-            }
+    // יצירת הודעה עם הוראות ברורות
+    const message = `
+=== הוראות להוספת הפוסט ===
 
-            insertAtCursor(textarea, formatted);
-            updatePreview();
-        }
+1. פתח את הקישור הבא:
+   https://github.com/Don-Quixote-of-words/docs
 
-        function addLink() {
-            const url = prompt('הכנס את כתובת הקישור:');
-            if (url) {
-                const textarea = document.getElementById('content');
-                const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-                const text = selection || prompt('הכנס את הטקסט לקישור:') || url;
-                const link = `<a href="${url}">${text}</a>`;
-                insertAtCursor(textarea, link);
-                updatePreview();
-            }
-        }
+2. לחץ על קובץ posts.json (אם הוא לא קיים, לחץ על Add file -> Create new file)
 
-        function insertAtCursor(textarea, text) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const before = textarea.value.substring(0, start);
-            const after = textarea.value.substring(end);
-            textarea.value = before + text + after;
-            textarea.focus();
-        }
+3. העתק את התוכן הבא:
 
-        function updatePreview() {
-            const content = document.getElementById('content').value;
-            document.getElementById('previewContent').innerHTML = content;
-        }
+${JSON.stringify({
+    posts: [postData],
+    lastUpdate: postData.date
+}, null, 2)}
 
-        function saveDraft() {
-            const draftData = {
-                title: document.getElementById('title').value,
-                summary: document.getElementById('summary').value,
-                content: document.getElementById('content').value,
-                tags: document.getElementById('tags').value,
-                lastSaved: new Date().toISOString()
-            };
+4. הדבק את התוכן בעורך
 
-            localStorage.setItem('postDraft', JSON.stringify(draftData));
-            alert('הטיוטה נשמרה בהצלחה!');
-        }
+5. בתחתית העמוד:
+   - כתוב: "הוספת פוסט: ${postData.title}"
+   - לחץ על "Commit changes"
+`;
 
-        document.getElementById('content').addEventListener('input', updatePreview);
+    // הצגת ההוראות בחלון מודאלי
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>הוראות להעלאת הפוסט</h2>
+            <pre dir="ltr" style="text-align: left;">${message}</pre>
+            <div class="modal-buttons">
+                <button onclick="copyInstructions(this)" class="button">העתק הוראות</button>
+                <button onclick="openGitHub()" class="button">פתח את GitHub</button>
+                <button onclick="closeModal(this)" class="button secondary">סגור</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+});
 
-        document.getElementById('postForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const postData = {
-                id: Date.now().toString(),
-                title: document.getElementById('title').value,
-                summary: document.getElementById('summary').value,
-                content: document.getElementById('content').value,
-                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()),
-                date: "2025-03-05T22:57:41Z",
-                author: "huxhkuh"
-            };
+function copyInstructions(button) {
+    const pre = button.parentElement.previousElementSibling;
+    navigator.clipboard.writeText(pre.textContent);
+    button.textContent = 'ההוראות הועתקו!';
+    setTimeout(() => button.textContent = 'העתק הוראות', 2000);
+}
 
-            try {
-                // ניסיון לקרוא את הקובץ הקיים
-                const response = await fetch('https://raw.githubusercontent.com/Don-Quixote-of-words/docs/main/posts.json');
-                let currentData = { posts: [] };
-                
-                if (response.ok) {
-                    currentData = await response.json();
-                }
+function openGitHub() {
+    window.open('https://github.com/Don-Quixote-of-words/docs', '_blank');
+}
 
-                // הוספת הפוסט החדש לתחילת המערך
-                currentData.posts.unshift(postData);
-                currentData.lastUpdate = postData.date;
+function closeModal(button) {
+    button.closest('.modal').remove();
+}
 
-                // יצירת תוכן חדש לקובץ
-                const newContent = JSON.stringify(currentData, null, 2);
+// הוספת סגנונות לחלון המודאלי
+const style = document.createElement('style');
+style.textContent = `
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
-                // יצירת URL לפתיחת PR
-                const encodedContent = encodeURIComponent(newContent);
-                const prTitle = encodeURIComponent(`הוספת פוסט: ${postData.title}`);
-                const prBody = encodeURIComponent(`פוסט חדש נוסף: ${postData.title}\n\nתקציר: ${postData.summary}`);
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
 
-                const url = `https://github.com/Don-Quixote-of-words/docs/new/main?filename=posts.json&value=${encodedContent}&message=${prTitle}&description=${prBody}`;
-                
-                window.open(url, '_blank');
+.modal-content pre {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    font-family: monospace;
+}
 
-                // שמירה במטמון המקומי
-                localStorage.setItem('postsCache', JSON.stringify(currentData));
-
-                // מחיקת הטיוטה
-                localStorage.removeItem('postDraft');
-
-                alert('הפוסט נשלח בהצלחה! נא לאשר את השינויים ב-GitHub');
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('אירעה שגיאה בשמירת הפוסט. אנא נסה שוב.');
-            }
-        });
-
-        // טעינת טיוטה אם קיימת
-        window.addEventListener('load', function() {
-            const savedDraft = localStorage.getItem('postDraft');
-            if (savedDraft) {
-                const draft = JSON.parse(savedDraft);
-                document.getElementById('title').value = draft.title || '';
-                document.getElementById('summary').value = draft.summary || '';
-                document.getElementById('content').value = draft.content || '';
-                document.getElementById('tags').value = draft.tags || '';
-                updatePreview();
-            }
-        });
-    </script>
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: flex-end;
+}
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html>
