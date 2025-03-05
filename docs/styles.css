@@ -1,68 +1,106 @@
 :root {
     /* פלטת צבעים שמחה ומודרנית */
-    --primary: #FF6B6B;      /* ורוד-אדום חי */
-    --secondary: #4ECDC4;    /* טורקיז בהיר */
-    --accent: #FFE66D;       /* צהוב שמש */
-    --purple-pop: #7C73E6;   /* סגול עדין */
-    --background: #FFFFFF;   /* רקע לבן נקי */
-    --text: #2D3436;        /* אפור כהה לטקסט */
+    --primary: #FF6B6B;
+    --secondary: #4ECDC4;
+    --accent: #FFE66D;
+    --purple-pop: #7C73E6;
+    --text: #2D3436;
+    
+    /* צבעים חדשים לשקיפויות */
+    --bg-transparent: rgba(255, 255, 255, 0.9);
+    --card-bg: rgba(255, 255, 255, 0.95);
 }
 
+/* עדכון רקע */
 body {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('./image (5).png');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     line-height: 1.6;
     color: var(--text);
-    background-color: var(--background);
     margin: 0;
-    padding: 20px;
+    min-height: 100vh;
+    padding: 0; /* הסרנו את ה-padding המקורי */
 }
 
-/* כותרות עם צבעים שמחים */
-h1 {
-    color: var(--primary);
-    font-size: 2.5em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 1em;
+/* עדכון מיכל התוכן הראשי */
+.main-content {
+    background: var(--bg-transparent);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    margin: 20px auto;
+    max-width: 1200px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-h2 {
-    color: var(--secondary);
-    font-size: 2em;
-    font-weight: 600;
-    margin-top: 1.5em;
+/* עדכון קופסאות תוכן */
+.content-box {
+    background: var(--card-bg);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-left: 5px solid var(--accent);
 }
 
-h3 {
-    color: var(--purple-pop);
-    font-size: 1.5em;
-    font-weight: 600;
+/* עדכון פאנל ניהול */
+.admin-panel {
+    background: var(--bg-transparent);
+    backdrop-filter: blur(10px);
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* טקסט רגיל */
-p {
-    font-size: 1.1em;
-    line-height: 1.8;
-    margin-bottom: 1.2em;
+/* עדכון כותרות */
+h1, h2, h3 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
-/* קישורים מעוצבים */
-a {
-    color: var(--secondary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-bottom: 2px solid transparent;
+/* עדכון כרטיסי פוסטים */
+.post-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-a:hover {
-    color: var(--primary);
-    border-bottom: 2px solid var(--primary);
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-/* כפתורים */
+/* עדכון תפריט ניווט */
+.main-nav {
+    background: rgba(45, 52, 54, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* עדכון כפתורים */
 .button {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
     padding: 12px 24px;
     border-radius: 25px;
@@ -72,182 +110,56 @@ a:hover {
     letter-spacing: 1px;
     transition: all 0.3s ease;
     cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .button:hover {
-    background-color: var(--secondary);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-/* קופסאות תוכן */
-.content-box {
-    background: linear-gradient(135deg, #fff, #f8f9fa);
-    border-radius: 15px;
-    padding: 25px;
-    margin: 20px 0;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-    border-left: 5px solid var(--accent);
-}
-
-/* רשימות */
-ul, ol {
-    padding-left: 20px;
-}
-
-li {
-    margin-bottom: 10px;
-    position: relative;
-}
-
-ul li::before {
-    content: "•";
-    color: var(--primary);
-    font-weight: bold;
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
-}
-
-/* הדגשות */
-.highlight {
-    background: linear-gradient(120deg, var(--accent) 0%, var(--accent) 100%);
-    background-repeat: no-repeat;
-    background-size: 100% 0.25em;
-    background-position: 0 88%;
-    transition: background-size 0.25s ease-in;
-}
-
-.highlight:hover {
-    background-size: 100% 88%;
-}
-
-/* אנימציות בגלילה */
-.fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* תגיות */
-.tag {
-    background-color: var(--accent);
-    color: var(--text);
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    font-weight: 500;
-    display: inline-block;
-    margin: 5px;
-}
-
-/* מדיה קוורי לתצוגה מותאמת למובייל */
-@media (max-width: 768px) {
-    body {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
-
-    h2 {
-        font-size: 1.6em;
-    }
-
-    h3 {
-        font-size: 1.3em;
-    }
-
-    .content-box {
-        padding: 15px;
-    }
-}
-    padding: 1em;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-}
-
-
-/* נוסיף את הסגנונות החדשים לקובץ ה-CSS הקיים */
-
-/* עיצוב פאנל ניהול */
-.admin-panel {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-/* עיצוב טופס */
-.post-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
+/* עדכון שדות טופס */
 .form-control {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
     padding: 12px;
-    border: 2px solid #e1e1e1;
-    border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .form-control:focus {
+    background: white;
     border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
     outline: none;
 }
 
-/* עיצוב כפתורים בטופס */
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+/* עדכון פוטר */
+.site-footer {
+    background: rgba(45, 52, 54, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 4rem;
 }
 
-.button.secondary {
-    background-color: #8B8B8B;
-}
-
-/* עיצוב עורך התוכן */
-.tox-tinymce {
-    border-radius: 8px !important;
-}
-
-/* תצוגת תצוגה מקדימה */
-.preview-panel {
-    margin-top: 2rem;
-    padding: 2rem;
-    border: 2px solid #e1e1e1;
-    border-radius: 8px;
-}
-
-/* רספונסיביות */
+/* מדיה קוורי */
 @media (max-width: 768px) {
+    .main-content {
+        margin: 10px;
+        padding: 1rem;
+    }
+    
     .admin-panel {
         margin: 1rem;
         padding: 1rem;
     }
-
-    .form-actions {
+    
+    .nav-container {
         flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
     }
 }
