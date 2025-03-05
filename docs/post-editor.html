@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>כתיבת פוסט חדש - הכותבים</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.tiny.cloud/1/YOUR-API-KEY/tinymce/6/tinymce.min.js"></script>
-    <script src="load-posts.js"></script>
 </head>
 <body>
     <nav class="main-nav">
-        <!-- התפריט הרגיל... -->
+        <div class="nav-container">
+            <div class="site-title">
+                <h1 class="main-title">הכותבים</h1>
+                <p class="subtitle">ודון קישוט של המילים</p>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-button">דף הבית</a>
+                <a href="posts.html" class="nav-button">כל הפוסטים</a>
+                <a href="post-editor.html" class="nav-button admin active">כתיבת פוסט חדש</a>
+            </div>
+        </div>
     </nav>
 
     <main class="main-content">
@@ -29,7 +37,14 @@
 
                 <div class="form-group">
                     <label for="content">תוכן:</label>
-                    <textarea id="content"></textarea>
+                    <div class="editor-toolbar">
+                        <button type="button" onclick="formatText('bold')" class="toolbar-button">B</button>
+                        <button type="button" onclick="formatText('italic')" class="toolbar-button">I</button>
+                        <button type="button" onclick="formatText('h2')" class="toolbar-button">כותרת</button>
+                        <button type="button" onclick="addLink()" class="toolbar-button">קישור</button>
+                        <button type="button" onclick="formatText('ul')" class="toolbar-button">•</button>
+                    </div>
+                    <textarea id="content" class="form-control editor-content" rows="15"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -43,74 +58,127 @@
                 </div>
             </form>
 
-            <!-- חלון הוראות -->
-            <div id="instructionsModal" class="modal" style="display: none;">
-                <div class="modal-content">
-                    <h2>הוראות להעלאת הפוסט</h2>
-                    <pre id="instructions"></pre>
-                    <button onclick="copyInstructions()" class="button">העתק הוראות</button>
-                    <button onclick="closeModal()" class="button secondary">סגור</button>
-                </div>
-            </div>
+            <div id="preview" class="preview-panel"></div>
         </div>
     </main>
 
+    <style>
+        .editor-toolbar {
+            background: #f5f5f5;
+            padding: 0.5rem;
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #ddd;
+            border-bottom: none;
+        }
+
+        .toolbar-button {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .toolbar-button:hover {
+            background: #f0f0f0;
+        }
+
+        .editor-content {
+            border-radius: 0 0 8px 8px;
+            min-height: 300px;
+        }
+
+        .preview-panel {
+            margin-top: 2rem;
+            padding: 2rem;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+
+    <script src="load-posts.js"></script>
     <script>
         const blogSystem = new BlogSystem();
 
-        // הגדרת TinyMCE
-        tinymce.init({
-            selector: '#content',
-            directionality: 'rtl',
-            height: 500,
-            plugins: 'directionality paste lists link',
-            toolbar: 'undo redo | formatselect | bold italic | alignright aligncenter alignleft | bullist numlist | link',
-            menubar: false
-        });
+        function formatText(style) {
+            const textarea = document.getElementById('content');
+            const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+            let formatted = '';
 
-        // טיפול בשליחת הטופס
+            switch(style) {
+                case 'bold':
+                    formatted = `<strong>${selection}</strong>`;
+                    break;
+                case 'italic':
+                    formatted = `<em>${selection}</em>`;
+                    break;
+                case 'h2':
+                    formatted = `<h2>${selection}</h2>`;
+                    break;
+                case 'ul':
+                    formatted = `\n<ul>\n  <li>${selection}</li>\n</ul>`;
+                    break;
+            }
+
+            insertAtCursor(textarea, formatted);
+            updatePreview();
+        }
+
+        function addLink() {
+            const url = prompt('הכנס את כתובת הקישור:');
+            if (url) {
+                const textarea = document.getElementById('content');
+                const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+                const link = `<a href="${url}">${selection || url}</a>`;
+                insertAtCursor(textarea, link);
+                updatePreview();
+            }
+        }
+
+        function insertAtCursor(textarea, text) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(end);
+            textarea.value = before + text + after;
+            textarea.focus();
+        }
+
+        function updatePreview() {
+            const content = document.getElementById('content').value;
+            document.getElementById('preview').innerHTML = content;
+        }
+
+        document.getElementById('content').addEventListener('input', updatePreview);
+
         document.getElementById('postForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const postData = {
                 title: document.getElementById('title').value,
                 summary: document.getElementById('summary').value,
-                content: tinymce.get('content').getContent(),
+                content: document.getElementById('content').value,
                 tags: document.getElementById('tags').value.split(',').map(tag => tag.trim())
             };
 
-            const { content, instructions } = blogSystem.prepareNewPost(postData);
+            const { post, instructions } = blogSystem.prepareNewPost(postData);
             
-            // שמירה מקומית
-            const cachedData = JSON.parse(localStorage.getItem('postsCache') || '{"posts": []}');
-            cachedData.posts.push(content);
-            localStorage.setItem('postsCache', JSON.stringify({
-                timestamp: Date.now(),
-                posts: cachedData.posts
-            }));
-
             // הצגת ההוראות
-            document.getElementById('instructions').textContent = instructions;
-            document.getElementById('instructionsModal').style.display = 'block';
+            alert(`הפוסט מוכן להעלאה!\n\n${instructions}`);
+            
+            // מעבר לדף הפוסטים
+            if (confirm('האם תרצה לעבור לדף הפוסטים?')) {
+                window.location.href = 'posts.html';
+            }
         });
 
-        function copyInstructions() {
-            const instructions = document.getElementById('instructions').textContent;
-            navigator.clipboard.writeText(instructions);
-            alert('ההוראות הועתקו ללוח!');
-        }
-
-        function closeModal() {
-            document.getElementById('instructionsModal').style.display = 'none';
-            window.location.href = 'posts.html';
-        }
-
-        // טיפול בטיוטות
         function saveDraft() {
             const draftData = {
                 title: document.getElementById('title').value,
                 summary: document.getElementById('summary').value,
-                content: tinymce.get('content').getContent(),
+                content: document.getElementById('content').value,
                 tags: document.getElementById('tags').value,
                 lastSaved: new Date().toISOString()
             };
@@ -126,43 +194,11 @@
                 const draft = JSON.parse(savedDraft);
                 document.getElementById('title').value = draft.title || '';
                 document.getElementById('summary').value = draft.summary || '';
-                tinymce.get('content').setContent(draft.content || '');
+                document.getElementById('content').value = draft.content || '';
                 document.getElementById('tags').value = draft.tags || '';
+                updatePreview();
             }
         });
     </script>
-
-    <style>
-        /* סגנונות למודל */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        pre {
-            background: #f5f5f5;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-    </style>
 </body>
 </html>
