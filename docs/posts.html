@@ -1,42 +1,182 @@
-<!DOCTYPE html>
-<html dir="rtl" lang="he">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>הבלוג שלי</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="blog-container">
-        <h1>הפוסטים שלי</h1>
-        <div id="posts-list" class="posts-grid"></div>
-    </div>
+:root {
+    /* הצבעים הקיימים */
+    --primary: #FF6B6B;
+    --secondary: #4ECDC4;
+    --accent: #FFE66D;
+    --purple-pop: #7C73E6;
+    --text: #2D3436;
+    
+    /* צבעים חדשים לשקיפויות */
+    --bg-transparent: rgba(255, 255, 255, 0.9);
+    --card-bg: rgba(255, 255, 255, 0.95);
+}
 
-    <script>
-        // טעינת הפוסטים
-        function loadPosts() {
-            const postsContainer = document.getElementById('posts-list');
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+/* עיצוב הרקע הכללי */
+body {
+    /* אפשרות 1: תמונת רקע מלאה */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    
+    /* שאר ההגדרות */
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+    min-height: 100vh;
+}
 
-            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+/* עדכון סגנון התפריט */
+.main-nav {
+    background: rgba(255, 107, 107, 0.95); /* שימוש בצבע הראשי עם שקיפות */
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+}
 
-            postsContainer.innerHTML = posts.map(post => `
-                <article class="post-card">
-                    <h2>${post.title}</h2>
-                    <div class="post-meta">
-                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
-                        <span class="post-author">מאת ${post.author}</span>
-                    </div>
-                    <p class="post-summary">${post.summary}</p>
-                    <div class="post-tags">
-                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                </article>
-            `).join('');
-        }
+/* עדכון סגנון הכרטיסים */
+.post-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        // טעינת הפוסטים בעת טעינת הדף
-        window.addEventListener('load', loadPosts);
-    </script>
-</body>
-</html>
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+/* עיצוב חדש לכותרת הראשית */
+.site-header {
+    text-align: center;
+    padding: 4rem 1rem;
+    margin: 2rem auto;
+    max-width: 800px;
+    background: linear-gradient(135deg, 
+                              rgba(255, 107, 107, 0.9), 
+                              rgba(78, 205, 196, 0.9));
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* עיצוב טופס עריכה */
+.admin-panel {
+    background: var(--bg-transparent);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 1000px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* עיצוב שדות הטופס */
+.form-control {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background: white;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+    outline: none;
+}
+
+/* עיצוב תגיות */
+.tag {
+    background: var(--accent);
+    color: var(--text);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 5px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* עיצוב כפתורים */
+.button {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.button.secondary {
+    background: linear-gradient(135deg, #8B8B8B, #6B6B6B);
+}
+
+/* עיצוב פוטר */
+.site-footer {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    background: rgba(45, 52, 54, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    text-align: center;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.post-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+    .site-header {
+        margin: 1rem;
+        padding: 2rem 1rem;
+    }
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .admin-panel {
+        margin: 1rem;
+        padding: 1rem;
+    }
+}
