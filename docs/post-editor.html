@@ -3,43 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>עורך פוסטים</title>
+    <title>כתיבת פוסט חדש - הכותבים</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- נוסיף את TinyMCE לעריכת תוכן עשיר -->
-    <script src="https://cdn.tiny.cloud/1/3bldcmnm0c715soijh2pocxjv9r1hjlwhk27y6s2kiys2ejf/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/YOUR-API-KEY/tinymce/6/tinymce.min.js"></script>
+    <script src="load-posts.js"></script>
 </head>
 <body>
-    <div class="admin-panel">
-        <h1>יצירת פוסט חדש</h1>
-        
-        <form id="postForm" class="post-form">
-            <div class="form-group">
-                <label for="title">כותרת הפוסט:</label>
-                <input type="text" id="title" name="title" required class="form-control">
-            </div>
+    <nav class="main-nav">
+        <!-- התפריט הרגיל... -->
+    </nav>
 
-            <div class="form-group">
-                <label for="summary">תקציר:</label>
-                <textarea id="summary" name="summary" rows="3" class="form-control"></textarea>
-            </div>
+    <main class="main-content">
+        <div class="admin-panel">
+            <h1>יצירת פוסט חדש</h1>
+            <form id="postForm" class="post-form">
+                <div class="form-group">
+                    <label for="title">כותרת:</label>
+                    <input type="text" id="title" required class="form-control">
+                </div>
 
-            <div class="form-group">
-                <label for="content">תוכן הפוסט:</label>
-                <textarea id="content" name="content" class="form-control"></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="summary">תקציר:</label>
+                    <textarea id="summary" class="form-control" rows="3"></textarea>
+                </div>
 
-            <div class="form-group">
-                <label for="tags">תגיות (הפרד בפסיקים):</label>
-                <input type="text" id="tags" name="tags" class="form-control">
-            </div>
+                <div class="form-group">
+                    <label for="content">תוכן:</label>
+                    <textarea id="content"></textarea>
+                </div>
 
-            <div class="form-actions">
-                <button type="submit" class="button">פרסם פוסט</button>
-                <button type="button" class="button secondary" onclick="saveDraft()">שמור טיוטה</button>
-            </div>
-        </form>
-    </div>
+                <div class="form-group">
+                    <label for="tags">תגיות (הפרד בפסיקים):</label>
+                    <input type="text" id="tags" class="form-control">
+                </div>
 
-    <script src="post-editor.js"></script>
+                <div class="form-actions">
+                    <button type="submit" class="button">פרסם פוסט</button>
+                    <button type="button" class="button secondary" onclick="saveDraft()">שמור טיוטה</button>
+                </div>
+            </form>
+
+            <!-- חלון הוראות -->
+            <div id="instructionsModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h2>הוראות להעלאת הפוסט</h2>
+                    <pre id="instructions"></pre>
+                    <button onclick="copyInstructions()" class="button">העתק הוראות</button>
+                    <button onclick="closeModal()" class="button secondary">סגור</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const blogSystem = new BlogSystem();
+
+        // הגדרת TinyMCE
+        tinymce.init({
+            selector: '#content',
+            directionality: 'rtl',
+            height: 500,
+            plugins: 'directionality paste lists link',
+            toolbar: 'undo redo | formatselect | bold italic | alignright aligncenter alignleft | bullist numlist | link',
+            menubar: false
+        });
+
+        // טיפול בשליחת הטופס
+        document.getElementById('postForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const postData = {
+                title: document.getElementById('title').value,
+                summary: document.getElementById('summary').value,
+                content: tinymce.get('content').getContent(),
+                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim())
+            };
+
+            const { content, instructions } = blogSystem.prepareNewPost(postData);
+            
+            // שמירה מקומית
+            const cachedData = JSON.parse(localStorage.getItem('postsCache') || '{"posts": []}');
+            cachedData.posts.push(content);
+            localStorage.setItem('postsCache', JSON.stringify({
+                timestamp: Date.now(),
+                posts: cachedData.posts
+            }));
+
+            // הצגת ההוראות
+            document.getElementById('instructions').textContent = instructions;
+            document.getElementById('instructionsModal').style.display = 'block';
+        });
+
+        function copyInstructions() {
+            const instructions = document.getElementById('instructions').textContent;
+            navigator.clipboard.writeText(instructions);
+            alert('ההוראות הועתקו ללוח!');
+        }
+
+        function closeModal() {
+            document.getElementById('instructionsModal').style.display = 'none';
+            window.location.href = 'posts.html';
+        }
+
+        // טיפול בטיוטות
+        function saveDraft() {
+            const draftData = {
+                title: document.getElementById('title').value,
+                summary: document.getElementById('summary').value,
+                content: tinymce.get('content').getContent(),
+                tags: document.getElementById('tags').value,
+                lastSaved: new Date().toISOString()
+            };
+
+            localStorage.setItem('postDraft', JSON.stringify(draftData));
+            alert('הטיוטה נשמרה בהצלחה!');
+        }
+
+        // טעינת טיוטה אם קיימת
+        window.addEventListener('load', function() {
+            const savedDraft = localStorage.getItem('postDraft');
+            if (savedDraft) {
+                const draft = JSON.parse(savedDraft);
+                document.getElementById('title').value = draft.title || '';
+                document.getElementById('summary').value = draft.summary || '';
+                tinymce.get('content').setContent(draft.content || '');
+                document.getElementById('tags').value = draft.tags || '';
+            }
+        });
+    </script>
+
+    <style>
+        /* סגנונות למודל */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
 </body>
 </html>
