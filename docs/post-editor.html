@@ -38,8 +38,8 @@
                 <div class="form-group">
                     <label for="content">תוכן:</label>
                     <div class="editor-toolbar">
-                        <button type="button" onclick="formatText('bold')" class="toolbar-button">B</button>
-                        <button type="button" onclick="formatText('italic')" class="toolbar-button">I</button>
+                        <button type="button" onclick="formatText('bold')" class="toolbar-button"><strong>B</strong></button>
+                        <button type="button" onclick="formatText('italic')" class="toolbar-button"><em>I</em></button>
                         <button type="button" onclick="formatText('h2')" class="toolbar-button">כותרת</button>
                         <button type="button" onclick="addLink()" class="toolbar-button">קישור</button>
                         <button type="button" onclick="formatText('ul')" class="toolbar-button">•</button>
@@ -53,12 +53,15 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="button">פרסם פוסט</button>
+                    <button type="submit" class="button">שמור ופרסם</button>
                     <button type="button" class="button secondary" onclick="saveDraft()">שמור טיוטה</button>
                 </div>
-            </form>
 
-            <div id="preview" class="preview-panel"></div>
+                <div id="preview" class="preview-panel">
+                    <h3>תצוגה מקדימה</h3>
+                    <div id="previewContent"></div>
+                </div>
+            </form>
         </div>
     </main>
 
@@ -78,6 +81,7 @@
             margin-left: 5px;
             border-radius: 4px;
             cursor: pointer;
+            min-width: 35px;
         }
 
         .toolbar-button:hover {
@@ -87,6 +91,7 @@
         .editor-content {
             border-radius: 0 0 8px 8px;
             min-height: 300px;
+            font-family: inherit;
         }
 
         .preview-panel {
@@ -96,12 +101,17 @@
             border-radius: 8px;
             background: white;
         }
+
+        .form-actions {
+            margin: 2rem 0;
+        }
+
+        #previewContent {
+            margin-top: 1rem;
+        }
     </style>
 
-    <script src="load-posts.js"></script>
     <script>
-        const blogSystem = new BlogSystem();
-
         function formatText(style) {
             const textarea = document.getElementById('content');
             const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
@@ -115,10 +125,10 @@
                     formatted = `<em>${selection}</em>`;
                     break;
                 case 'h2':
-                    formatted = `<h2>${selection}</h2>`;
+                    formatted = `\n<h2>${selection}</h2>\n`;
                     break;
                 case 'ul':
-                    formatted = `\n<ul>\n  <li>${selection}</li>\n</ul>`;
+                    formatted = `\n<ul>\n  <li>${selection}</li>\n</ul>\n`;
                     break;
             }
 
@@ -131,7 +141,8 @@
             if (url) {
                 const textarea = document.getElementById('content');
                 const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
-                const link = `<a href="${url}">${selection || url}</a>`;
+                const text = selection || prompt('הכנס את הטקסט לקישור:') || url;
+                const link = `<a href="${url}">${text}</a>`;
                 insertAtCursor(textarea, link);
                 updatePreview();
             }
@@ -148,31 +159,8 @@
 
         function updatePreview() {
             const content = document.getElementById('content').value;
-            document.getElementById('preview').innerHTML = content;
+            document.getElementById('previewContent').innerHTML = content;
         }
-
-        document.getElementById('content').addEventListener('input', updatePreview);
-
-        document.getElementById('postForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const postData = {
-                title: document.getElementById('title').value,
-                summary: document.getElementById('summary').value,
-                content: document.getElementById('content').value,
-                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim())
-            };
-
-            const { post, instructions } = blogSystem.prepareNewPost(postData);
-            
-            // הצגת ההוראות
-            alert(`הפוסט מוכן להעלאה!\n\n${instructions}`);
-            
-            // מעבר לדף הפוסטים
-            if (confirm('האם תרצה לעבור לדף הפוסטים?')) {
-                window.location.href = 'posts.html';
-            }
-        });
 
         function saveDraft() {
             const draftData = {
@@ -186,6 +174,60 @@
             localStorage.setItem('postDraft', JSON.stringify(draftData));
             alert('הטיוטה נשמרה בהצלחה!');
         }
+
+        document.getElementById('content').addEventListener('input', updatePreview);
+
+        document.getElementById('postForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const postData = {
+                id: Date.now().toString(),
+                title: document.getElementById('title').value,
+                summary: document.getElementById('summary').value,
+                content: document.getElementById('content').value,
+                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()),
+                date: "2025-03-05T22:57:41Z",
+                author: "huxhkuh"
+            };
+
+            try {
+                // ניסיון לקרוא את הקובץ הקיים
+                const response = await fetch('https://raw.githubusercontent.com/Don-Quixote-of-words/docs/main/posts.json');
+                let currentData = { posts: [] };
+                
+                if (response.ok) {
+                    currentData = await response.json();
+                }
+
+                // הוספת הפוסט החדש לתחילת המערך
+                currentData.posts.unshift(postData);
+                currentData.lastUpdate = postData.date;
+
+                // יצירת תוכן חדש לקובץ
+                const newContent = JSON.stringify(currentData, null, 2);
+
+                // יצירת URL לפתיחת PR
+                const encodedContent = encodeURIComponent(newContent);
+                const prTitle = encodeURIComponent(`הוספת פוסט: ${postData.title}`);
+                const prBody = encodeURIComponent(`פוסט חדש נוסף: ${postData.title}\n\nתקציר: ${postData.summary}`);
+
+                const url = `https://github.com/Don-Quixote-of-words/docs/new/main?filename=posts.json&value=${encodedContent}&message=${prTitle}&description=${prBody}`;
+                
+                window.open(url, '_blank');
+
+                // שמירה במטמון המקומי
+                localStorage.setItem('postsCache', JSON.stringify(currentData));
+
+                // מחיקת הטיוטה
+                localStorage.removeItem('postDraft');
+
+                alert('הפוסט נשלח בהצלחה! נא לאשר את השינויים ב-GitHub');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('אירעה שגיאה בשמירת הפוסט. אנא נסה שוב.');
+            }
+        });
 
         // טעינת טיוטה אם קיימת
         window.addEventListener('load', function() {
