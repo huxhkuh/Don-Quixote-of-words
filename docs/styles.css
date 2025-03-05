@@ -81,23 +81,133 @@ h1, h2, h3 {
     box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-/* עדכון תפריט ניווט */
-.main-nav {
-    background: rgba(45, 52, 54, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 1rem 0;
-    margin-bottom: 2rem;
-}
-
+/* עיצוב תפריט הניווט */
 .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 1rem;
 }
 
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.nav-button {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.nav-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    border-color: var(--accent);
+}
+
+.nav-button.active {
+    background: var(--accent);
+    color: var(--text);
+}
+
+.nav-button.admin {
+    background: var(--primary);
+    color: white;
+}
+
+/* עיצוב רשת הפוסטים */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+/* עדכון כותרות */
+.site-title {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.main-title {
+    font-size: 3em;
+    margin: 0;
+    color: var(--accent);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+    font-size: 1.4em;
+    margin: 0.5rem 0 0 0;
+    color: white;
+    opacity: 0.9;
+}
+
+/* עיצוב מחדש של הכרטיסים */
+.post-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.post-card h3 {
+    color: var(--primary);
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+.post-summary {
+    flex-grow: 1;
+    margin: 1rem 0;
+}
+
+.post-card .button {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 1rem;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .main-title {
+        font-size: 2em;
+    }
+
+    .subtitle {
+        font-size: 1.2em;
+    }
+}
 /* עדכון כפתורים */
 .button {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
