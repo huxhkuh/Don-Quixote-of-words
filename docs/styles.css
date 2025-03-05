@@ -163,3 +163,99 @@ h1, h2, h3 {
         padding: 1rem;
     }
 }
+
+
+/* עיצוב כותרת האתר */
+.site-title {
+    text-align: center;
+    color: white;
+}
+
+.main-title {
+    font-size: 2.5em;
+    margin: 0;
+    color: var(--accent);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+    font-size: 1.2em;
+    margin: 0;
+    opacity: 0.9;
+    color: white;
+}
+
+/* עיצוב פוסט בודד */
+.single-post {
+    background: var(--card-bg);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.post-title {
+    color: var(--primary);
+    font-size: 2.5em;
+    margin-bottom: 1rem;
+}
+
+.post-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+    opacity: 0.8;
+}
+
+.post-content {
+    margin-top: 2rem;
+    line-height: 1.8;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.error-message {
+    text-align: center;
+    padding: 3rem;
+}
+
+/* שיפור תצוגת כרטיסי פוסטים */
+.post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.post-card .button {
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.post-summary {
+    margin: 1rem 0;
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+    .site-title {
+        margin-bottom: 1rem;
+    }
+
+    .main-title {
+        font-size: 2em;
+    }
+
+    .subtitle {
+        font-size: 1em;
+    }
+
+    .single-post {
+        padding: 1rem;
+    }
+}
