@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עורך פוסטים</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- נוסיף את TinyMCE לעריכת תוכן עשיר -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+<body>
+    <div class="admin-panel">
+        <h1>יצירת פוסט חדש</h1>
+        
+        <form id="postForm" class="post-form">
+            <div class="form-group">
+                <label for="title">כותרת הפוסט:</label>
+                <input type="text" id="title" name="title" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="summary">תקציר:</label>
+                <textarea id="summary" name="summary" rows="3" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="content">תוכן הפוסט:</label>
+                <textarea id="content" name="content" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">תגיות (הפרד בפסיקים):</label>
+                <input type="text" id="tags" name="tags" class="form-control">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button">פרסם פוסט</button>
+                <button type="button" class="button secondary" onclick="saveDraft()">שמור טיוטה</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="post-editor.js"></script>
+</body>
+</html>
