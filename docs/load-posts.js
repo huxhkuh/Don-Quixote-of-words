@@ -1,4 +1,4 @@
-class BlogSystem {
+ class BlogSystem {
     constructor() {
         this.GITHUB_USER = 'huxhkuh';
         this.GITHUB_REPO = 'Don-Quixote-of-words';
