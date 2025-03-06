@@ -26,17 +26,16 @@
         <div id="posts-container" class="posts-grid"></div>
     </main>
 
-    <script src="load-posts.js"></script>
     <script>
-        const blogSystem = new BlogSystem();
-
         async function displayPosts() {
             const loading = document.getElementById('loading');
             const container = document.getElementById('posts-container');
             
             try {
                 loading.style.display = 'block';
-                const posts = await blogSystem.loadPosts();
+                const response = await fetch('posts.json');
+                const data = await response.json();
+                const posts = data.posts;
                 
                 if (posts.length === 0) {
                     container.innerHTML = `
@@ -46,22 +45,24 @@
                         </div>
                     `;
                 } else {
-                    container.innerHTML = posts.map(post => `
-                        <article class="post-card">
-                            <h2>${post.title}</h2>
-                            <div class="post-meta">
-                                <time datetime="${post.date}">
-                                    ${new Date(post.date).toLocaleDateString('he-IL')}
-                                </time>
-                                <span class="author">מאת ${post.author}</span>
-                            </div>
-                            <p class="summary">${post.summary}</p>
-                            <div class="tags">
-                                ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                            </div>
-                            <a href="post-view.html?id=${post.id}" class="button">קרא עוד</a>
-                        </article>
-                    `).join('');
+                    container.innerHTML = posts
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .map(post => `
+                            <article class="post-card">
+                                <h2>${post.title}</h2>
+                                <div class="post-meta">
+                                    <time datetime="${post.date}">
+                                        ${new Date(post.date).toLocaleDateString('he-IL')}
+                                    </time>
+                                    <span class="author">מאת ${post.author}</span>
+                                </div>
+                                <p class="summary">${post.summary}</p>
+                                <div class="tags">
+                                    ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
+                                <a href="post-view.html?id=${post.id}" class="button">קרא עוד</a>
+                            </article>
+                        `).join('');
                 }
             } catch (error) {
                 container.innerHTML = `
@@ -95,6 +96,56 @@
         .no-posts {
             text-align: center;
             padding: 2rem;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .post-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-meta {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            align-self: start;
+            margin-top: auto;
+        }
+
+        .button:hover {
+            background: var(--primary-dark);
         }
     </style>
 </body>
