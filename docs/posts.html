@@ -16,7 +16,6 @@
             <div class="nav-links">
                 <a href="index.html" class="nav-button">דף הבית</a>
                 <a href="posts.html" class="nav-button active">כל הפוסטים</a>
-                <a href="post-editor.html" class="nav-button admin">כתיבת פוסט חדש</a>
             </div>
         </div>
     </nav>
@@ -25,6 +24,10 @@
         <div id="loading" class="loading">טוען פוסטים...</div>
         <div id="posts-container" class="posts-grid"></div>
     </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 הכותבים - ודון קישוט של המילים</p>
+    </footer>
 
     <script>
         async function displayPosts() {
@@ -41,7 +44,6 @@
                     container.innerHTML = `
                         <div class="no-posts">
                             <p>עדיין אין פוסטים.</p>
-                            <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
                         </div>
                     `;
                 } else {
@@ -79,74 +81,5 @@
 
         window.addEventListener('load', displayPosts);
     </script>
-
-    <style>
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            font-size: 1.2em;
-        }
-
-        .error {
-            text-align: center;
-            padding: 2rem;
-            color: var(--primary);
-        }
-
-        .no-posts {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .posts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .post-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .post-meta {
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        .tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: #f0f0f0;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            align-self: start;
-            margin-top: auto;
-        }
-
-        .button:hover {
-            background: var(--primary-dark);
-        }
-    </style>
 </body>
 </html>
