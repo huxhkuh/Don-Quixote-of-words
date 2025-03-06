@@ -32,44 +32,56 @@
     </footer>
 
     <script>
-        function loadPost() {
-            // קבלת מזהה הפוסט מה-URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
-            
-            // טעינת כל הפוסטים מהאחסון המקומי
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
-            
-            // מציאת הפוסט הספציפי
-            const post = posts.find(p => p.date === postId);
-            
-            if (!post) {
+        async function loadPost() {
+            try {
+                // קבלת מזהה הפוסט מה-URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('id');
+                
+                // טעינת הפוסטים מהשרת
+                const response = await fetch('posts.json');
+                const data = await response.json();
+                const posts = data.posts;
+                
+                // מציאת הפוסט הספציפי לפי ID
+                const post = posts.find(p => p.id === postId);
+                
+                if (!post) {
+                    document.getElementById('post-content').innerHTML = `
+                        <div class="error-message">
+                            <h2>הפוסט לא נמצא</h2>
+                            <a href="posts.html" class="button">חזור לכל הפוסטים</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // הצגת הפוסט
+                document.getElementById('post-content').innerHTML = `
+                    <h1 class="post-title">${post.title}</h1>
+                    <div class="post-meta">
+                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
+                        <span class="post-author">מאת ${post.author}</span>
+                    </div>
+                    <div class="post-tags">
+                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="post-content">
+                        ${post.content}
+                    </div>
+                `;
+
+                // עדכון כותרת הדף
+                document.title = `${post.title} - הכותבים`;
+            } catch (error) {
+                console.error('Error loading post:', error);
                 document.getElementById('post-content').innerHTML = `
                     <div class="error-message">
-                        <h2>הפוסט לא נמצא</h2>
+                        <h2>שגיאה בטעינת הפוסט</h2>
                         <a href="posts.html" class="button">חזור לכל הפוסטים</a>
                     </div>
                 `;
-                return;
             }
-
-            // הצגת הפוסט
-            document.getElementById('post-content').innerHTML = `
-                <h1 class="post-title">${post.title}</h1>
-                <div class="post-meta">
-                    <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
-                    <span class="post-author">מאת ${post.author}</span>
-                </div>
-                <div class="post-tags">
-                    ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                </div>
-                <div class="post-content">
-                    ${post.content}
-                </div>
-            `;
-
-            // עדכון כותרת הדף
-            document.title = `${post.title} - הכותבים`;
         }
 
         window.addEventListener('load', loadPost);
