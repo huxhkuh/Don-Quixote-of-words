@@ -2,37 +2,44 @@
 <html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
-    <title>ניהול פוסטים</title>
-<script src="tinymce/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: '#content',
-            plugins: 'lists link image',
-            toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | numlist bullist | link image',
-            directionality: 'rtl'
-        });
-    </script>
+    <title>ניהול פוסט חדש</title>
+    <link rel="stylesheet" href="../docs/styles.css">
 </head>
 <body>
-    <h1>ניהול פוסט חדש</h1>
 
-    <form id="postForm">
-        <label for="title">כותרת:</label>
-        <input type="text" id="title" required><br>
+<h1>ניהול פוסט חדש</h1>
 
-        <label for="summary">תקציר:</label>
-        <textarea id="summary"></textarea><br>
+<form id="postForm">
+    <label for="title">כותרת:</label><br>
+    <input type="text" id="title" required><br>
 
-        <label for="content">תוכן:</label>
-        <textarea id="content"></textarea><br>
+    <label for="summary">תקציר:</label><br>
+    <textarea id="summary"></textarea><br>
 
-        <label for="tags">תגיות (מופרדות בפסיקים):</label>
-        <input type="text" id="tags"><br>
+    <label for="content">תוכן:</label><br>
+    <textarea id="content"></textarea><br>
 
-        <button type="submit">שמור ופרסם</button>
-    </form>
+    <label for="tags">תגיות (מופרדות בפסיקים):</label><br>
+    <input type="text" id="tags"><br>
 
-    <script src="admin-post-editor.js"></script>
+    <button type="submit">שמור ופרסם</button>
+</form>
+
+<!-- כאן אנחנו טוענים את TinyMCE -->
+<script src="tinymce/tinymce.min.js"></script>
+
+<!-- כאן אנחנו מאתחלים אותו -->
+<script>
+    tinymce.init({
+        selector: '#content',
+        plugins: 'lists link',
+        toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | numlist bullist | link',
+        directionality: 'rtl'
+    });
+</script>
+
+<!-- כאן נטען את הקובץ שאחראי לשליחת הפוסט לגיטהאב -->
+<script src="admin-post-editor.js"></script>
+
 </body>
 </html>
-
