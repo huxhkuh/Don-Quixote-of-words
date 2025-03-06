@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>ניהול פוסטים</title>
+    <script src="https://cdn.tiny.cloud/1/your-tinymce-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            plugins: 'lists link image',
+            toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright | numlist bullist | link image',
+            directionality: 'rtl'
+        });
+    </script>
+</head>
+<body>
+    <h1>ניהול פוסט חדש</h1>
+
+    <form id="postForm">
+        <label for="title">כותרת:</label>
+        <input type="text" id="title" required><br>
+
+        <label for="summary">תקציר:</label>
+        <textarea id="summary"></textarea><br>
+
+        <label for="content">תוכן:</label>
+        <textarea id="content"></textarea><br>
+
+        <label for="tags">תגיות (מופרדות בפסיקים):</label>
+        <input type="text" id="tags"><br>
+
+        <button type="submit">שמור ופרסם</button>
+    </form>
+
+    <script src="admin-post-editor.js"></script>
+</body>
+</html>
 
