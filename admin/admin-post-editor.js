@@ -1,8 +1,7 @@
+import { GITHUB_TOKEN } from './secrets.js';
+
 document.getElementById('postForm').onsubmit = async function (e) {
     e.preventDefault();
-
-    // טוען את ה-token מה-secrets.js
-import { GITHUB_TOKEN } from './secrets.js';
 
     const content = tinymce.get('content').getContent();
 
@@ -18,12 +17,11 @@ import { GITHUB_TOKEN } from './secrets.js';
 
     const repo = 'huxhkuh/Don-Quixote-of-words';
     const filePath = `new-posts/post-${postData.id}.json`;
-import { GITHUB_TOKEN } from './secrets.js';
 
     const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
         method: 'PUT',
         headers: {
-            Authorization: `token ${token}`,
+            Authorization: `token ${GITHUB_TOKEN}`,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -34,7 +32,7 @@ import { GITHUB_TOKEN } from './secrets.js';
 
     if (response.ok) {
         alert('הפוסט נשמר בהצלחה ב-new-posts!');
-        window.location.href = '../docs/posts.html';  // או כל דף שאתה רוצה לחזור אליו
+        window.location.href = '../docs/posts.html';
     } else {
         alert('שגיאה בשמירת הפוסט');
     }
