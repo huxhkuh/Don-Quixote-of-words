@@ -1,9 +1,12 @@
 const GITHUB_TOKEN = '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';  // תכניס את הטוקן האמיתי כאן
 
+function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+}
+
 document.getElementById('postForm').onsubmit = async function (e) {
     e.preventDefault();
 
-    // קבלת התוכן מתוך TinyMCE
     const content = tinymce.get('content').getContent();
 
     const postData = {
@@ -28,7 +31,7 @@ document.getElementById('postForm').onsubmit = async function (e) {
             },
             body: JSON.stringify({
                 message: `הוספת פוסט חדש: ${postData.title}`,
-                content: btoa(JSON.stringify(postData, null, 2))
+                content: utf8ToBase64(JSON.stringify(postData, null, 2))
             })
         });
 
