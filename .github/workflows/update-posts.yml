@@ -16,13 +16,19 @@ jobs:
 
       - name: Merge new posts into posts.json
         run: |
-          jq -s '.[0] + .[1]' docs/posts.json new-posts/*.json > docs/posts.tmp.json
+          if [ ! -f docs/posts.json ]; then
+            echo '{"posts":[]}' > docs/posts.json
+          fi
+          jq -s '.[0].posts + .[1][] | {posts: .}' docs/posts.json new-posts/*.json > docs/posts.tmp.json
           mv docs/posts.tmp.json docs/posts.json
+          rm new-posts/*.json
 
       - name: Commit and Push Updated posts.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.POSTS_UPDATE_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/posts.json
           git commit -m "Update posts.json with new posts"
-          git push
+          git push https://x-access-token:$GITHUB_TOKEN@github.com/huxhkuh/Don-Quixote-of-words-huxhkuh.git
