@@ -34,41 +34,98 @@
 
     <script>
         // טעינת הפוסטים האחרונים
-        function loadRecentPosts() {
+        async function loadRecentPosts() {
             const postsContainer = document.getElementById('recent-posts');
-            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
             
-            const recentPosts = posts
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 3);
+            try {
+                const response = await fetch('posts.json');
+                const data = await response.json();
+                const recentPosts = data.posts
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 3);
 
-            if (recentPosts.length === 0) {
+                if (recentPosts.length === 0) {
+                    postsContainer.innerHTML = `
+                        <div class="no-posts">
+                            <p>עדיין אין פוסטים.</p>
+                            <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
+                        </div>`;
+                    return;
+                }
+
+                postsContainer.innerHTML = recentPosts.map(post => `
+                    <article class="post-card">
+                        <h3>${post.title}</h3>
+                        <div class="post-meta">
+                            <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
+                            <span class="post-author">מאת ${post.author}</span>
+                        </div>
+                        <div class="post-summary">${post.summary}</div>
+                        <div class="post-tags">
+                            ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="post-view.html?id=${post.id}" class="button">קרא עוד</a>
+                    </article>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading posts:', error);
                 postsContainer.innerHTML = `
-                    <div class="no-posts">
-                        <p>עדיין אין פוסטים.</p>
-                        <a href="post-editor.html" class="button">כתוב את הפוסט הראשון</a>
+                    <div class="error-message">
+                        <p>אירעה שגיאה בטעינת הפוסטים.</p>
+                        <p>אנא נסה שוב מאוחר יותר.</p>
                     </div>`;
-                return;
             }
-
-            postsContainer.innerHTML = recentPosts.map(post => `
-                <article class="post-card">
-                    <h3>${post.title}</h3>
-                    <div class="post-meta">
-                        <span class="post-date">${new Date(post.date).toLocaleDateString('he-IL')}</span>
-                        <span class="post-author">מאת ${post.author}</span>
-                    </div>
-                    <div class="post-summary">${post.summary}</div>
-                    <div class="post-tags">
-                        ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
-                    <a href="post-view.html?id=${post.date}" class="button">קרא עוד</a>
-                </article>
-            `).join('');
         }
 
         window.addEventListener('load', loadRecentPosts);
     </script>
+
+    <style>
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: #dc3545;
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .post-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .post-meta {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+    </style>
 </body>
 </html>
-          
