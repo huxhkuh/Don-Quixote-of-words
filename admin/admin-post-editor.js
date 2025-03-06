@@ -1,6 +1,9 @@
 document.getElementById('postForm').onsubmit = async function (e) {
     e.preventDefault();
 
+    // טוען את ה-token מה-secrets.js
+import { GITHUB_TOKEN } from './secrets.js';
+
     const content = tinymce.get('content').getContent();
 
     const postData = {
@@ -15,7 +18,7 @@ document.getElementById('postForm').onsubmit = async function (e) {
 
     const repo = 'huxhkuh/Don-Quixote-of-words';
     const filePath = `new-posts/post-${postData.id}.json`;
-    const token = 'YOUR_PERSONAL_ACCESS_TOKEN';  // נדאג לשפר את זה בהמשך
+import { GITHUB_TOKEN } from './secrets.js';
 
     const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
         method: 'PUT',
