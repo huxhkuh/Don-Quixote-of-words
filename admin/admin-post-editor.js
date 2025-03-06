@@ -1,11 +1,4 @@
-const GITHUB_TOKEN = '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';  // תכניס את הטוקן האמיתי כאן
-
-function utf8ToBase64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-}
-
-document.getElementById('postForm').onsubmit = async function (e) {
-    e.preventDefault();
+const GITHUB_TOKEN = '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';
 
     const content = tinymce.get('content').getContent();
 
